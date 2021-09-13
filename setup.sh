@@ -77,7 +77,7 @@ function create_node_pool() {
         --cluster="${CLUSTER_NAME}" \
         --disk-type="pd-ssd" --disk-size="100GB" \
         --image-type="UBUNTU_CONTAINERD" \
-        --machine-type="n2-standard-4" \
+        --machine-type="n2-standard-2" \
         --num-nodes=1 \
         --no-enable-autoupgrade --enable-autorepair --enable-autoscaling \
         --metadata disable-legacy-endpoints=true \
@@ -85,7 +85,6 @@ function create_node_pool() {
         --node-labels="${NODES_LABEL}" \
         --max-pods-per-node=110 --min-nodes=1 --max-nodes=50 \
         --region="${REGION}" \
-        "${PREEMPTIBLE}"
 }
 
 function setup_mysql_database() {
@@ -98,7 +97,7 @@ function setup_mysql_database() {
             --database-version=MYSQL_5_7 \
             --storage-size=20 \
             --storage-auto-increase \
-            --tier=db-n1-standard-2 \
+            --tier=db-g1-small \
             --region="${REGION}" \
             --replica-type=FAILOVER \
             --enable-bin-log
@@ -323,7 +322,7 @@ function install() {
             create "${CLUSTER_NAME}" \
             --disk-type="pd-ssd" --disk-size="50GB" \
             --image-type="UBUNTU_CONTAINERD" \
-            --machine-type="e2-standard-2" \
+            --machine-type="n2-standard-2" \
             --cluster-version="${GKE_VERSION}" \
             --region="${REGION}" \
             --service-account "$GKE_SA_EMAIL" \
@@ -337,7 +336,7 @@ function install() {
             --max-pods-per-node=110 --default-max-pods-per-node=110 \
             --min-nodes=0 --max-nodes=1 \
             --addons=HorizontalPodAutoscaling,NodeLocalDNS,NetworkPolicy \
-            ${NODES_LOCATIONS} ${PREEMPTIBLE}
+            ${NODES_LOCATIONS} 
 
         # delete default node pool (is not possible to create a cluster without nodes)
         gcloud --quiet container node-pools delete default-pool --cluster="${CLUSTER_NAME}" --region="${REGION}"
@@ -379,7 +378,6 @@ function install() {
     install_cert_manager
     setup_managed_dns
     setup_mysql_database
-    install_jaeger_operator
     install_gitpod
 
     wait_for_load_balancer
