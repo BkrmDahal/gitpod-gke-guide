@@ -18,7 +18,7 @@ set -a
 GKE_SA=gitpod-gke
 GKE_SA_EMAIL="${GKE_SA}"@"${PROJECT_NAME}".iam.gserviceaccount.com
 # Cloud SQL - mysql
-MYSQL_SA=gitpod-mysql
+MYSQL_SA="gitpod-mysql"
 MYSQL_SA_EMAIL="${MYSQL_SA}"@"${PROJECT_NAME}".iam.gserviceaccount.com
 # Object storage
 OBJECT_STORAGE_SA=gitpod-storage
@@ -84,7 +84,7 @@ function create_node_pool() {
         --scopes="gke-default,https://www.googleapis.com/auth/ndev.clouddns.readwrite" \
         --node-labels="${NODES_LABEL}" \
         --max-pods-per-node=110 --min-nodes=1 --max-nodes=50 \
-        --region="${REGION}" \
+        --region="${REGION}" 
 }
 
 function setup_mysql_database() {
@@ -379,7 +379,6 @@ function install() {
     setup_managed_dns
     setup_mysql_database
     install_gitpod
-
     wait_for_load_balancer
 }
 
